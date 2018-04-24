@@ -44,6 +44,7 @@ ASTERISK_REGISTER_FILE()
 #include "asterisk/threadstorage.h"
 #include "asterisk/res_mongodb.h"
 
+#define HANDLE_ID_AS_OID 1
 #define BSON_UTF8_VALIDATE(utf8,allow_null) \
       bson_utf8_validate (utf8, (int) strlen (utf8), allow_null)
 
@@ -279,7 +280,16 @@ static bson_t *make_query(const struct ast_variable *fields, const char *orderby
 
             switch(count) {
                 case 1:
-                    err = !BSON_APPEND_UTF8(query, key_asterisk2mongo(fields->name), fields->value);
+#ifdef HANDLE_ID_AS_OID
+                    if ((strcmp(fields->name, "id") == 0)
+                    &&  bson_oid_is_valid(fields->value, strlen(fields->value))) {
+                        bson_oid_t oid;
+                        bson_oid_init_from_string(&oid, fields->value);
+                        err = !BSON_APPEND_OID(query, "_id", &oid);
+                    }
+                    else
+#endif
+                        err = !BSON_APPEND_UTF8(query, key_asterisk2mongo(fields->name), fields->value);
                     break;
                 case 2:
                     if (!strcasecmp(tokens[1], "LIKE")) {

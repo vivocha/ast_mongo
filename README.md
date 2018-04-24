@@ -20,8 +20,11 @@ Plugin name            |Realtime    |CDR|CEL|Source code|Config file(s)
 The plugins are provided as source code patches to Asterisk.
 See [patches](patches) in detail.
 
+## Test
+See [Test](test/docker).
 
-## Test bench
+## ~~Test bench~~
+**(Deprecated, use [Test](test/docker) instead of it)**
 
 The test bench based on Docker technology for these plugins is also provided.
 You can examine how it works on your desktop simply.

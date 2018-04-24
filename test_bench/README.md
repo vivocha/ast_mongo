@@ -1,5 +1,5 @@
 
-## Testing Configuration
+## ~~Testing Configuration~~ (Deprecated)
 
 A testing environment of this test bench is consisted of Docker technorogy and the configuration is as follows;
 
