@@ -109,9 +109,7 @@ Array [
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 1`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "[ Context '__func_periodic_hook_context__' created by 'func_periodic_hook' ]
+"[ Context '__func_periodic_hook_context__' created by 'func_periodic_hook' ]
 'beep' (CID match '') =>  1. Answer()                                   [func_periodic_hook]
 2. Playback(beep)                             [func_periodic_hook]
 'hook' (CID match '') =>  1. Set(EncodedChannel=\${CUT(HOOK_CHANNEL,-,1-2)}) [func_periodic_hook]
@@ -120,39 +118,26 @@ Object {
 4. ExecIf($[\${GROUP_COUNT(\${GROUP_NAME}@periodic-hook)} > 1]?Hangup()) [func_periodic_hook]
 5. Set(ChannelToSpy=\${URIDECODE(\${EncodedChannel})}) [func_periodic_hook]
 6. ChanSpy(\${ChannelToSpy},qEB)               [func_periodic_hook]
-
 [ Context 'default' created by 'pbx_config' ]
 '_6.' =>          1. NoOp()                                     [extensions.conf:0]
 2. Dial(PJSIP/\${EXTEN})                       [extensions.conf:0]
 3. Hangup()                                   [extensions.conf:0]
-
--= 3 extensions (11 priorities) in 2 contexts. =-",
-  "Response": "Success",
-}
+-= 3 extensions (11 priorities) in 2 contexts. =-
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 2`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Transport:  <TransportId........>  <Type>  <cos>  <tos>  <BindAddress....................>
+"Transport:  <TransportId........>  <Type>  <cos>  <tos>  <BindAddress....................>
 ==========================================================================================
-
 Transport:  transport-udp             udp      0      0  0.0.0.0:5060
-
 Objects found: 1
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 3`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Transport:  <TransportId........>  <Type>  <cos>  <tos>  <BindAddress....................>
+"Transport:  <TransportId........>  <Type>  <cos>  <tos>  <BindAddress....................>
 ==========================================================================================
-
 Transport:  transport-udp             udp      0      0  0.0.0.0:5060
-
 ParameterName              : ParameterValue
 ===========================================
 allow_reload               : false
@@ -178,15 +163,11 @@ tos                        : 0
 verify_client              : No
 verify_server              : No
 websocket_write_timeout    : 100
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 4`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Endpoint:  <Endpoint/CID.....................................>  <State.....>  <Channels.>
+"Endpoint:  <Endpoint/CID.....................................>  <State.....>  <Channels.>
 I/OAuth:  <AuthId/UserName...........................................................>
 Aor:  <Aor............................................>  <MaxContact>
 Contact:  <Aor/ContactUri..........................> <Hash....> <Status> <RTT(ms)..>
@@ -196,24 +177,17 @@ Match:  <criteria.........................>
 Channel:  <ChannelId......................................>  <State.....>  <Time.....>
 Exten: <DialedExten...........>  CLCID: <ConnectedLineCID.......>
 ==========================================================================================
-
 Endpoint:  6001                                                 Unavailable   0 of inf
 InAuth:  6001/6001
 Aor:  6001                                               1
 Contact:  6001/sip:6001@tester:5060                  9d7987fe43 Created       0.000
 Transport:  transport-udp             udp      0      0  0.0.0.0:5060
-
-
 Objects found: 1
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 5`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Endpoint:  <Endpoint/CID.....................................>  <State.....>  <Channels.>
+"Endpoint:  <Endpoint/CID.....................................>  <State.....>  <Channels.>
 I/OAuth:  <AuthId/UserName...........................................................>
 Aor:  <Aor............................................>  <MaxContact>
 Contact:  <Aor/ContactUri..........................> <Hash....> <Status> <RTT(ms)..>
@@ -223,14 +197,11 @@ Match:  <criteria.........................>
 Channel:  <ChannelId......................................>  <State.....>  <Time.....>
 Exten: <DialedExten...........>  CLCID: <ConnectedLineCID.......>
 ==========================================================================================
-
 Endpoint:  6001                                                 Not in use    0 of inf
 InAuth:  6001/6001
 Aor:  6001                                               1
 Contact:  6001/sip:6001@tester:5060                  9d7987fe43 Created       0.000
 Transport:  transport-udp             udp      0      0  0.0.0.0:5060
-
-
 ParameterName                      : ParameterValue
 =========================================================
 100rel                             : yes
@@ -343,38 +314,24 @@ use_ptime                          : false
 user_eq_phone                      : false
 voicemail_extension                :
 webrtc                             : no
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 6`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Aor:  <Aor..............................................>  <MaxContact>
+"Aor:  <Aor..............................................>  <MaxContact>
 Contact:  <Aor/ContactUri............................> <Hash....> <Status> <RTT(ms)..>
 ==========================================================================================
-
 Aor:  6001                                                 1
 Contact:  6001/sip:6001@tester:5060                    9d7987fe43 Unknown         nan
-
-
 Objects found: 1
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 7`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "Aor:  <Aor..............................................>  <MaxContact>
+"Aor:  <Aor..............................................>  <MaxContact>
 Contact:  <Aor/ContactUri............................> <Hash....> <Status> <RTT(ms)..>
-
 Aor:  6001                                                 1
 Contact:  6001/sip:6001@tester:5060                    9d7987fe43 Unknown         nan
-
-
 ParameterName        : ParameterValue
 authenticate_qualify : false
 contact              : sip:6001@tester:5060
@@ -389,33 +346,21 @@ qualify_timeout      : 3.000000
 remove_existing      : true
 support_path         : false
 voicemail_extension  :
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 8`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "I/OAuth:  <AuthId/UserName.............................................................>
+"I/OAuth:  <AuthId/UserName.............................................................>
 ==========================================================================================
-
 Auth:  6001/6001
-
 Objects found: 1
-",
-  "Response": "Success",
-}
+"
 `;
 
 exports[`ast_mongo check pjsip resources of the remote asterisk 9`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "I/OAuth:  <AuthId/UserName.............................................................>
+"I/OAuth:  <AuthId/UserName.............................................................>
 ==========================================================================================
-
 Auth:  6001/6001
-
 ParameterName  : ParameterValue
 ===============================
 auth_type      : userpass
@@ -424,15 +369,7 @@ nonce_lifetime : 32
 password       : 6001
 realm          :
 username       : 6001
-",
-  "Response": "Success",
-}
+"
 `;
 
-exports[`ast_mongo wait for a call, accept it, then disconnect from far 1`] = `
-Object {
-  "Message": "Command output follows",
-  "Output": "",
-  "Response": "Success",
-}
-`;
+exports[`ast_mongo wait for a call, accept it, then disconnect from far 1`] = `""`;

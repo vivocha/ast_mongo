@@ -84,6 +84,27 @@ function delay(sec: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, sec * 1000));
 }
 
+/**
+ * Trim the result and adjust it for differences with older and newer asterisk
+ */
+function adjustOutput(result: object): string {
+    const head = /^\s+/gm;
+    const tail = /\s+$/gm;
+    const end = /^--END COMMAND/gm;
+    const pbx_config = /\[pbx_config\]/gm;
+    let output = result['$content'] || result.Output;
+    if (!output)
+        return '';
+    output = output
+        .replace(head, '')
+        .replace(tail, '')
+        .replace(end, '')
+        .replace(pbx_config, '[extensions.conf:0]');
+    if (output.slice(-1) !== '\n')
+        output = output + '\n';
+    return output;
+}
+
 beforeAll( async () => {
 
     global.Promise = Promise;
@@ -160,50 +181,60 @@ describe('ast_mongo', () => {
     test ('check pjsip resources of the remote asterisk', async () => {
         // 1
         const dialplan = await ast_utils.exec('dialplan show');
-        expect(dialplan).toMatchSnapshot();
+        debug('check pjsip resources of the remote asterisk - dialplan', dialplan);
+        expect(adjustOutput(dialplan)).toMatchSnapshot();
         // 2
         const transports = await ast_utils.exec('pjsip show transports');
-        expect(transports).toMatchSnapshot();
+        debug('check pjsip resources of the remote asterisk - transports', transports);
+        expect(adjustOutput(transports)).toMatchSnapshot();
         // 3
         const transport = await ast_utils.exec('pjsip show transport transport-udp');
-        expect(transport).toMatchSnapshot();
+        debug('check pjsip resources of the remote asterisk - transport', transport);
+        expect(adjustOutput(transport)).toMatchSnapshot();
         // 4
         const endpoints = await ast_utils.exec('pjsip show endpoints');
+        debug('check pjsip resources of the remote asterisk - endpoints', endpoints);
         // modify to compare with the snap shot
-        endpoints.Output = endpoints.Output.replace(/Not in use /g, "Unavailable");
+        endpoints.Output = adjustOutput(endpoints)
+            .replace(/Not in use /g, "Unavailable");
         endpoints.Output = endpoints.Output
             .replace(/Contact:  6001\/sip:6001@172(.*)Unknown(.*)\n/gm, "")
             .replace(/Contact:  6001\/sip:6001@tester:5060                  9d7987fe43 Unknown         nan$/gm,
                       "Contact:  6001/sip:6001@tester:5060                  9d7987fe43 Created       0.000");
-        expect(endpoints).toMatchSnapshot();
+        expect(endpoints.Output).toMatchSnapshot();
         // 5
         const endpoint = await ast_utils.exec(`pjsip show endpoint ${MyID}`);
+        debug('check pjsip resources of the remote asterisk - endpoint', endpoint);
         // modify to compare with the snap shot
-        const result = endpoint.Output
+        endpoint.Output = adjustOutput(endpoint)
             .replace(/Contact:  6001\/sip:6001@172(.*)\n/gm, "")
             .replace(/Contact:  6001\/sip:6001@tester:5060                  9d7987fe43 Unknown         nan$/gm,
                       "Contact:  6001/sip:6001@tester:5060                  9d7987fe43 Created       0.000");
-        endpoint.Output = result;
-        expect(endpoint).toMatchSnapshot();
+        expect(endpoint.Output).toMatchSnapshot();
         // 6
         const aors = await ast_utils.exec('pjsip show aors');
+        debug('check pjsip resources of the remote asterisk - aors', aors);
         // modify to compare with the snap shot
-        aors.Output = aors.Output.replace(/^Contact:  6001\/sip:6001@172(.*)\n/gm, "");
-        expect(aors).toMatchSnapshot();
+        aors.Output = adjustOutput(aors)
+            .replace(/^Contact:  6001\/sip:6001@172(.*)\n/gm, "");
+        expect(aors.Output).toMatchSnapshot();
         // 7
         const aor = await ast_utils.exec(`pjsip show aor ${MyID}`);
+        debug('check pjsip resources of the remote asterisk - aor', aor);
         // modify to compare with the snap shot
-        aor.Output = aor.Output
+        aor.Output = adjustOutput(aor)
             .replace(/^=+\n/gm, "")
             .replace(/Contact:  6001\/sip:6001@172(.*)\n/gm, "")
             .replace(/contact              : sip:6001@172(.*)\n/gm, "");
-        expect(aor).toMatchSnapshot();
+        expect(aor.Output).toMatchSnapshot();
         // 8
         const auths = await ast_utils.exec('pjsip show auths');
-        expect(auths).toMatchSnapshot();
+        debug('check pjsip resources of the remote asterisk - auths', auths);
+        expect(adjustOutput(auths)).toMatchSnapshot();
         // 9
         const auth = await ast_utils.exec(`pjsip show auth ${MyID}`);
-        expect(auth).toMatchSnapshot();
+        debug('check pjsip resources of the remote asterisk - auth', auth);
+        expect(adjustOutput(auth)).toMatchSnapshot();
     });
 
     test ('create a pjsua', done => {
@@ -263,7 +294,8 @@ describe('ast_mongo', () => {
         });
         debug('make an inbound call');
         const result = await ast_utils.exec(AstMakeAShortCall);
-        expect(result).toMatchSnapshot();
+        debug('wait for a call, accept it, then disconnect from far - result', result);
+        expect(adjustOutput(result)).toMatchSnapshot();
     });
 
     test ('check cdr', async () => {

@@ -57,10 +57,31 @@ function ignores(objs: object[]): object {
     return results;
 }
 
-function ignoreIdentify(result: object) {
+/**
+ * Trim the result and adjust it for differences with older and newer asterisk
+ */
+function adjustOutput(result: object): string {
+    const head = /^\s+/gm;
+    const tail = /\s+$/gm;
+    const end = /^--END COMMAND/gm;
+    const pbx_config = /\[pbx_config\]/gm;
+    let output = result['$content'] || result.Output;
+    if (!output)
+        return '';
+    output = output
+        .replace(head, '')
+        .replace(tail, '')
+        .replace(end, '')
+        .replace(pbx_config, '[extensions.conf:0]');
+    if (output.slice(-1) !== '\n')
+        output = output + '\n';
+    return output;
+}
+
+function ignoreIdentify(result: object): string {
     const filter = /Identify\:  [0-9a-f]{24}\//gm;
-    result.Output = result.Output.replace(filter, "Identify:  000000000000000000000000/");
-    return result;
+    return adjustOutput(result)
+        .replace(filter, "Identify:  000000000000000000000000/");
 }
 
 beforeAll( async () => {
@@ -85,7 +106,7 @@ describe('ast_mongo', () => {
 
     test ('check if there is no identifies', async () => {
         const identifies = await ast_utils.exec('pjsip show identifies');
-        expect(identifies).toMatchSnapshot();
+        expect(adjustOutput(identifies)).toMatchSnapshot();
     });
 
     test ('write an identify', async () => {
@@ -124,6 +145,6 @@ describe('ast_mongo', () => {
         await ast_mongo.Identify.remove({ endpoint: 'my_realtime_trunk' });
 
         const identifies = await ast_utils.exec('pjsip show identifies');
-        expect(identifies).toMatchSnapshot();
+        expect(adjustOutput(identifies)).toMatchSnapshot();
     });
 });
