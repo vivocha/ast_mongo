@@ -631,7 +631,7 @@ index 0000000..fde214f
 +	.reload = reload,
 +);
 diff --git a/configure.ac b/configure.ac
-index 233a52d..d762404 100644
+index 233a52d..e95a794 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -568,6 +568,8 @@ AST_EXT_LIB_SETUP([TINFO], [Term Info], [tinfo])
@@ -643,17 +643,17 @@ index 233a52d..d762404 100644
  AST_EXT_LIB_SETUP([VORBIS], [Vorbis], [vorbis])
  AST_EXT_LIB_SETUP([VPB], [Voicetronix API], [vpb])
  AST_EXT_LIB_SETUP([X11], [X11], [x11])
-@@ -2182,6 +2184,10 @@ AST_C_DECLARE_CHECK([UNBOUND_CONST_PARAMS], [UNBOUND_VERSION_MAJOR], [unbound.h]
+@@ -2439,6 +2441,10 @@ if test "${PBX_SQLITE3}" != 1; then
+ 	exit 1
+ fi
  
- AST_EXT_LIB_CHECK([UNIXODBC], [odbc], [SQLConnect], [sql.h], [])
- 
++# for ast_mongo
 +AST_EXT_LIB_CHECK([BSON], [bson-1.0], [bson_init], [libbson-1.0/bson.h], [], [-I/usr/local/include/libbson-1.0])
-+
 +AST_EXT_LIB_CHECK([MONGOC], [mongoc-1.0], [mongoc_init], [libmongoc-1.0/mongoc.h], [], [-I/usr/local/include/libbson-1.0 -I/usr/local/include/libmongoc-1.0])
 +
- AST_EXT_LIB_CHECK([OGG], [ogg], [ogg_sync_init], [])
- 
- # Non-glibc platforms require libexecinfo for backtrace support
+ # Find crypt support
+ # * -lcrypt on *NIX
+ # * in libsystem on OS X
 diff --git a/include/asterisk/res_mongodb.h b/include/asterisk/res_mongodb.h
 new file mode 100644
 index 0000000..a307c90
