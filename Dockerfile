@@ -16,6 +16,7 @@ RUN  mkdir ast_mongo
 
 RUN apt -qq update \
 &&  apt -qq install -y \
+    cmake \
     libssl-dev \
     libsasl2-dev \
     libncurses5-dev \
@@ -53,7 +54,11 @@ RUN wget https://github.com/cisco/libsrtp/archive/v$VERSION_LIBSRTP.tar.gz \
 RUN cd $HOME \
 &&  wget -nv "https://github.com/mongodb/mongo-c-driver/releases/download/$VERSION_MONGOC/mongo-c-driver-$VERSION_MONGOC.tar.gz" -O - | tar xzf - \
 &&  cd mongo-c-driver-$VERSION_MONGOC \
-&&  ./configure --disable-automatic-init-and-cleanup > /dev/null \
+&&  if [ "$(printf '%s\n' "$VERSION_MONGOC" "1.10.0" | sort -V | head -n1)" = "1.10.0" ] ; then \
+      cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_BUILD_TYPE=Release ; \
+    else \
+      ./configure --disable-automatic-init-and-cleanup > /dev/null ; \
+    fi \
 &&  make all install > make.log \
 &&  make clean \
 &&  cd $HOME \

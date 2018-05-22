@@ -11,8 +11,8 @@ services:
       dockerfile: Dockerfile
       args:
         VERSION_ASTERISK: 15.4.0
-        VERSION_MONGOC: 1.9.5
-        VERSION_LIBSRTP: 2.1.0        
+        VERSION_MONGOC: 1.10.0
+        VERSION_LIBSRTP: 2.1.0
     volumes:
       - ../volume/etc/asterisk:/etc/asterisk
       - ../volume/var/lib/asterisk/sounds/en:/var/lib/asterisk/sounds/en
