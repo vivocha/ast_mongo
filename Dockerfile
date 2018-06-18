@@ -24,6 +24,7 @@ RUN apt -qq update \
     libsqlite3-dev \
     libjansson-dev \
     libcurl4-openssl-dev \
+    cmake \
     pkg-config \
     build-essential \
     autoconf \
@@ -53,9 +54,11 @@ RUN wget https://github.com/cisco/libsrtp/archive/v$VERSION_LIBSRTP.tar.gz \
 RUN cd $HOME \
 &&  wget -nv "https://github.com/mongodb/mongo-c-driver/releases/download/$VERSION_MONGOC/mongo-c-driver-$VERSION_MONGOC.tar.gz" -O - | tar xzf - \
 &&  cd mongo-c-driver-$VERSION_MONGOC \
-&&  ./configure --disable-automatic-init-and-cleanup > /dev/null \
-&&  make all install > make.log \
-&&  make clean \
+&&  mkdir cmake-build \
+&&  cd cmake-build \
+&&  cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF .. \
+&&  make \
+&&  make install \
 &&  cd $HOME \
 &&  tar czf mongo-c-driver-$VERSION_MONGOC.tgz mongo-c-driver-$VERSION_MONGOC \
 &&  rm -rf mongo-c-driver-$VERSION_MONGOC
