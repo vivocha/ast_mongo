@@ -656,6 +656,7 @@ static struct ast_variable *realtime(const char *database, const char *table, co
     mongoc_cursor_t *cursor = NULL;
     const bson_t *doc = NULL;
     bson_t *query = NULL;
+    bson_t *opts = NULL;
 
     if (!database || !table || !fields) {
         ast_log(LOG_ERROR, "not enough arguments\n");
@@ -683,7 +684,8 @@ static struct ast_variable *realtime(const char *database, const char *table, co
         LOG_BSON_AS_JSON(LOG_DEBUG, "query=%s, database=%s, table=%s\n", query, database, table);
 
         collection = mongoc_client_get_collection(dbclient, database, table);
-        cursor = mongoc_collection_find(collection, MONGOC_QUERY_NONE, 0, 1, 0, query, NULL, NULL);
+        opts = BCON_NEW("limit", BCON_INT64(1));
+        cursor = mongoc_collection_find_with_opts(collection, query, opts, NULL);
         if (!cursor) {
             LOG_BSON_AS_JSON(LOG_ERROR, "query failed with query=%s, database=%s, table=%s\n", query, database, table);
             break;
@@ -720,6 +722,8 @@ static struct ast_variable *realtime(const char *database, const char *table, co
         bson_destroy((bson_t *)doc);
     if (query)
         bson_destroy((bson_t *)query);
+    if (opts)
+        bson_destroy((bson_t *)opts);
     if (cursor)
         mongoc_cursor_destroy(cursor);
     if (collection)
@@ -794,7 +798,7 @@ static struct ast_config* realtime_multi(const char *database, const char *table
 
         LOG_BSON_AS_JSON(LOG_DEBUG, "query=%s, database=%s, table=%s\n", query, database, table);
 
-        cursor = mongoc_collection_find(collection, MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
+        cursor = mongoc_collection_find_with_opts(collection, query, NULL, NULL);
         if (!cursor) {
             LOG_BSON_AS_JSON(LOG_ERROR, "query failed with query=%s, database=%s, table=%s\n", query, database, table);
             break;
@@ -1203,8 +1207,8 @@ static struct ast_config *load(
     bson_t *query = NULL;
     const bson_t *doc = NULL;
     const bson_t *order = NULL;
-    const bson_t *root = NULL;
     const bson_t *fields = NULL;
+    const bson_t *opts = NULL;
     const char *last_category = "";
     int last_cat_metric = -1;
 
@@ -1239,21 +1243,21 @@ static struct ast_config *load(
                             "var_metric", BCON_DOUBLE(1),
                             "category", BCON_DOUBLE(1),
                             "var_name", BCON_DOUBLE(1));
-        root = BCON_NEW(    "$query", BCON_DOCUMENT(query),
-                            "$orderby", BCON_DOCUMENT(order));
-        fields = BCON_NEW(  "cat_metric", BCON_DOUBLE(1),
-                            "category", BCON_DOUBLE(1),
-                            "var_name", BCON_DOUBLE(1),
-                            "var_val", BCON_DOUBLE(1));
+        fields = BCON_NEW(  "cat_metric", BCON_BOOL(1),
+                            "category", BCON_BOOL(true),
+                            "var_name", BCON_BOOL(true),
+                            "var_val", BCON_BOOL(true));
+        opts = BCON_NEW(    "projection", BCON_DOCUMENT(query),
+                            "sort", BCON_DOCUMENT(order));
 
-        LOG_BSON_AS_JSON(LOG_DEBUG, "query=%s\n", root);
-        // LOG_BSON_AS_JSON(LOG_DEBUG, "fields=%s\n", fields);
+        LOG_BSON_AS_JSON(LOG_DEBUG, "query=%s\n", query);
+        LOG_BSON_AS_JSON(LOG_DEBUG, "opts=%s\n", opts);
 
         collection = mongoc_client_get_collection(dbclient, database, table);
-        cursor = mongoc_collection_find(collection, MONGOC_QUERY_NONE, 0, 0, 0, root, fields, NULL);
+        cursor = mongoc_collection_find_with_opts(collection, query, opts, NULL);
         if (!cursor) {
-            LOG_BSON_AS_JSON(LOG_ERROR, "query failed with query=%s\n", root);
-            LOG_BSON_AS_JSON(LOG_ERROR, "query failed with fields=%s\n", fields);
+            LOG_BSON_AS_JSON(LOG_ERROR, "query failed with query=%s\n", query);
+            LOG_BSON_AS_JSON(LOG_ERROR, "query failed with opts=%s\n", opts);
             break;
         }
 
@@ -1343,8 +1347,8 @@ static struct ast_config *load(
         bson_destroy((bson_t *)query);
     if (order)
         bson_destroy((bson_t *)order);
-    if (root)
-        bson_destroy((bson_t *)root);
+    if (opts)
+        bson_destroy((bson_t *)opts);
     if (cursor)
         mongoc_cursor_destroy(cursor);
     if (collection)
